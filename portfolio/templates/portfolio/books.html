@@ -1,0 +1,95 @@
+{% extends 'portfolio/base.html' %}
+
+{% block content %}
+<style>
+    /* Books Grid Layout */
+    .books-layout {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 60px;
+    }
+    
+    .single-book {
+        display: grid;
+        grid-template-columns: 300px 1fr; /* Фиксированная ширина для обложки, остальное текст */
+        gap: 50px;
+        align-items: start;
+        padding-bottom: 60px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .single-book:last-child { border-bottom: none; }
+
+    .book-cover-wrap img {
+        width: 100%;
+        box-shadow: 10px 10px 20px rgba(0,0,0,0.1);
+        border: 1px solid #eee;
+    }
+
+    .buy-btn {
+        display: inline-block;
+        margin-right: 10px;
+        margin-top: 10px;
+        padding: 8px 16px;
+        border: 1px solid #ccc;
+        color: var(--col-navy);
+        font-size: 0.85rem;
+        transition: all 0.2s;
+    }
+    .buy-btn:hover { background: var(--col-navy); color: #fff; border-color: var(--col-navy); }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+        .single-book { grid-template-columns: 1fr; gap: 30px; }
+        .book-cover-wrap { max-width: 200px; margin: 0 auto; } /* Центрируем обложку на мобиле */
+    }
+</style>
+
+<section class="section bg-light" style="padding-top: 100px; padding-bottom: 60px;">
+    <div class="container text-center">
+        <p class="uppercase text-gold">Library</p>
+        <h1>Publications & Thought Leadership</h1>
+        <p style="max-width: 600px; margin: 20px auto;">
+            A collection of books, guides, and strategic papers analyzing the intersection of policy, energy transition, and international relations.
+        </p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="books-layout">
+            {% for book in books %}
+            <article class="single-book">
+                <div class="book-cover-wrap">
+                    {% if book.cover_image %}
+                        <img src="{{ book.cover_image.url }}" alt="{{ book.title }}">
+                    {% else %}
+                        <div style="height: 400px; background: #eee; display: flex; align-items: center; justify-content: center; color: #888;">No Cover</div>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <h2 style="font-size: 2rem; margin-bottom: 15px;">{{ book.title }}</h2>
+                    <p style="margin-bottom: 25px; font-size: 1.05rem; line-height: 1.7;">
+                        {{ book.description|linebreaks }}
+                    </p>
+                    
+                    {% if book.links.all %}
+                    <div style="margin-top: 20px;">
+                        <h5 class="uppercase" style="color: #94a3b8; margin-bottom: 10px;">Available at:</h5>
+                        {% for link in book.links.all %}
+                            <a href="{{ link.url }}" target="_blank" class="buy-btn">{{ link.platform_name }}</a>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </article>
+            {% empty %}
+                <div class="text-center" style="padding: 60px;">
+                    <h3>No publications found.</h3>
+                    <p>Check back soon.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
